@@ -1,10 +1,10 @@
-#include "ui/controller.hpp"
+#include "lx/ui/controller.hpp"
 
 #include <cassert>
 #include <stdexcept>
 
-#include "overlay.hpp"
-#include "ui/lv_helper.hpp"
+#include "lx/overlay.hpp"
+#include "lx/ui/lv_helper.hpp"
 
 namespace lx::ui {
 

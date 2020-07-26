@@ -1,11 +1,10 @@
-#include "overlay.hpp"
+#include "lx/overlay.hpp"
 
 #include <cstring>
 #include <stdexcept>
 
-#include "debug.hpp"
-#include "theme.hpp"
-#include "util.hpp"
+#include "lx/debug.hpp"
+#include "lx/util.hpp"
 
 extern "C" u64 __nx_vi_layer_id;
 

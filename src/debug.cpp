@@ -1,4 +1,4 @@
-#include "debug.hpp"
+#include "lx/debug.hpp"
 
 #include <switch.h>
 
