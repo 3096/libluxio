@@ -19,7 +19,7 @@ Controller::Controller()
     lv_style_init(&m_fontStyleSmall);
     updateFontStyles_();
 
-    lv::initColorStyle(m_screenStyle, DEFAULT_SCREEN_COLOR);
+    lv::initBgColorStyle(m_screenStyle, DEFAULT_SCREEN_COLOR);
 
     LOGEL("done");
 }

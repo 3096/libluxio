@@ -17,7 +17,7 @@ static inline auto MARGIN() { return Overlay::getScaledRenderCoord(18); }
 
 namespace lv {
 
-inline void initColorStyle(lv_style_t& style, lv_color_t color) {
+inline void initBgColorStyle(lv_style_t& style, lv_color_t color) {
     lv_style_init(&style);
     lv_style_set_bg_color(&style, LV_STATE_DEFAULT, color);
 }
