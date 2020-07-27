@@ -3,9 +3,9 @@
 #include <functional>
 
 #include "../debug.hpp"
-#include "lvgl.h"
 #include "../overlay.hpp"
 #include "controller.hpp"
+#include "lvgl.h"
 
 namespace lx::ui {
 
@@ -43,6 +43,7 @@ inline void updateFitParent(lv_obj_t* p_lvObj) {
 
 }  // namespace lv
 
+#if LV_USE_LABEL
 namespace lv_label {
 
 inline auto create(lv_obj_t* p_parent) {
@@ -50,7 +51,9 @@ inline auto create(lv_obj_t* p_parent) {
 }
 
 }  // namespace lv_label
+#endif
 
+#if LV_USE_WIN
 namespace lv_win {
 
 inline auto HEADER_HEIGHT() { return Overlay::getScaledRenderCoord(50); }
@@ -67,7 +70,9 @@ inline void updateFitParent(lv_obj_t* p_lvWin) {
 }
 
 }  // namespace lv_win
+#endif
 
+#if LV_USE_BTNMATRIX
 namespace lv_btnmatrix {
 
 inline auto create(lv_obj_t* p_parent) {
@@ -76,5 +81,6 @@ inline auto create(lv_obj_t* p_parent) {
 }
 
 }  // namespace lv_btnmatrix
+#endif
 
 }  // namespace lx::ui
