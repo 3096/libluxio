@@ -1,6 +1,5 @@
 #pragma once
 
-#include "lx_config.h"
 #include "util.hpp"
 
 namespace lx {
