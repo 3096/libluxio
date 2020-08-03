@@ -47,7 +47,7 @@ class Controller {
     uint64_t m_keysHeld;
 
     // helpers
-    inline void mountScreen_(IScreen* screenToMount);
+    inline void mountScreen_(IScreen* screenToMount, IScreen* prevScreen);
     inline void updateFontStyles_();
     void threadMain_();
 

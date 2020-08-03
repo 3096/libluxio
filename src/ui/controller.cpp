@@ -26,8 +26,8 @@ Controller::Controller()
 
 Controller::~Controller() {}
 
-void Controller::mountScreen_(IScreen* screenToMount) {
-    screenToMount->mount();
+void Controller::mountScreen_(IScreen* screenToMount, IScreen* prevScreen) {
+    screenToMount->onMount(prevScreen);
     lv_indev_set_group(Overlay::getKeyInDev(), screenToMount->getLvInputGroup());
     lv_scr_load(screenToMount->getLvScreenObj());
     m_shouldRerender = true;
@@ -47,13 +47,13 @@ void Controller::updateFontStyles_() {
 void Controller::threadMain_() {
     // mount inital screen
     // DEBUG_ASSERT(mp_curScreen);  // TODO: implement an assert
-    mountScreen_(mp_curScreen);
+    mountScreen_(mp_curScreen, nullptr);
 
     // main loop
     while (true) {
         // check if exit is requested
         if (m_shouldExit) {
-            mp_curScreen->unmount();
+            mp_curScreen->onUnmount();
             break;
         }
 
@@ -79,8 +79,8 @@ void Controller::threadMain_() {
 
         if (m_screenIsOn) {
             if (mp_nextScreen) {  // check if next screen is requested
-                mp_curScreen->unmount();
-                mountScreen_(mp_nextScreen);
+                mp_curScreen->onUnmount();
+                mountScreen_(mp_nextScreen, mp_curScreen);
 
                 mp_curScreen = mp_nextScreen;
                 mp_nextScreen = nullptr;

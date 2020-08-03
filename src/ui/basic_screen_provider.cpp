@@ -3,7 +3,7 @@
 namespace lx::ui {
 
 BasicScreenProvider::BasicScreenProvider()
-    : mp_screenObj(lv_obj_create(nullptr, nullptr)), mp_inputGroup(lv_group_create()) {
+    : mp_prevScreen(nullptr), mp_screenObj(lv_obj_create(nullptr, nullptr)), mp_inputGroup(lv_group_create()) {
     lv_obj_add_style(mp_screenObj, LV_OBJ_PART_MAIN, Controller::getScreenStyle());
 }
 

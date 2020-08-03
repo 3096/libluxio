@@ -6,8 +6,8 @@ namespace lx::ui {
 
 class IScreen {
    public:
-    virtual void mount() {}
-    virtual void unmount() {}
+    virtual void onMount(IScreen* prevScreen) = 0;
+    virtual void onUnmount() {}
     virtual void renderScreen() = 0;
     virtual void procFrame() = 0;
 
