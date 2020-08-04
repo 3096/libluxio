@@ -62,6 +62,14 @@ inline auto create(lv_obj_t* p_parent) {
     return lv::createObjWithStyle(p_parent, lv_win_create, ui::Controller::getFontStyleNormal(), LV_WIN_PART_HEADER);
 }
 
+inline auto create(lv_obj_t* p_parent, lv_style_t& headerStyle) {
+    auto result = create(p_parent);
+    lv_obj_add_style(result, LV_WIN_PART_HEADER, &headerStyle);
+    lv_obj_add_style(result, LV_WIN_PART_BG, lx::ui::Controller::getScreenStyle());
+
+    return result;
+}
+
 inline void updateHeader(lv_obj_t* p_lvWin) { lv_win_set_header_height(p_lvWin, HEADER_HEIGHT()); }
 
 inline void updateFitParent(lv_obj_t* p_lvWin) {
@@ -78,6 +86,13 @@ namespace lv_btnmatrix {
 inline auto create(lv_obj_t* p_parent) {
     return lv::createObjWithStyle(p_parent, lv_btnmatrix_create, ui::Controller::getFontStyleSmall(),
                                   LV_BTNMATRIX_PART_BTN);
+}
+
+inline auto create(lv_obj_t* p_parent, lv_style_t& btnmatrixBgStyle, lv_style_t& btnmatrixBtnStyle) {
+    auto result = create(p_parent);
+    lv_obj_add_style(result, LV_BTNMATRIX_PART_BG, &btnmatrixBgStyle);
+    lv_obj_add_style(result, LV_BTNMATRIX_PART_BTN, &btnmatrixBtnStyle);
+    return result;
 }
 
 }  // namespace lv_btnmatrix
