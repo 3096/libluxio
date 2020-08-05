@@ -10,8 +10,11 @@ extern "C" u64 __nx_vi_layer_id;
 
 namespace lx {
 
-Overlay::Overlay() {
+Overlay::Overlay() : m_doRender(true), mp_curLvKeyMap(&DEFAULT_LV_KEY_MAP_INSTANCE) {
     LOGSL("constructing... ");
+
+    TRY_GOTO(apmInitialize(), end);
+    TRY_GOTO(viInitialize(ViServiceType_Manager), end);
 
     TRY_GOTO(viOpenDefaultDisplay(&m_viDisplay), end);
     TRY_GOTO(viGetDisplayVsyncEvent(&m_viDisplay, &m_viDisplayVsyncEvent), close_display);
@@ -58,8 +61,6 @@ Overlay::Overlay() {
     mp_keyIn = lv_indev_drv_register(&m_keyDrv);
 
     LOGEL("lv initialized... all done");
-
-    m_doRender = true;
     return;
 
 close_fb:
@@ -71,7 +72,7 @@ close_managed_layer:
 close_display:
     viCloseDisplay(&m_viDisplay);
 end:
-    throw std::runtime_error("Overlay init failed");
+    fatalThrow(MAKERESULT(404, 0));
 }
 
 Overlay::~Overlay() {
@@ -83,6 +84,7 @@ Overlay::~Overlay() {
     viDestroyManagedLayer(&m_viLayer);
     viCloseDisplay(&m_viDisplay);
     viExit();
+    apmExit();
 
     LOGEL("done");
 }
@@ -152,40 +154,27 @@ bool Overlay::touchRead_(lv_indev_drv_t* indev_driver, lv_indev_data_t* data) {
 }
 
 bool Overlay::keysRead_(lv_indev_drv_t* indev_driver, lv_indev_data_t* data) {
-    u64 keysDown = hidKeysHeld(CONTROLLER_P1_AUTO);
-    if (keysDown) {
-        data->state = LV_INDEV_STATE_PR;
-        // TODO: refactor this to a button map
-        if (keysDown & KEY_DUP)
-            data->key = LV_KEY_UP;
-        else if (keysDown & KEY_DDOWN)
-            data->key = LV_KEY_DOWN;
-        else if (keysDown & KEY_DRIGHT)
-            data->key = LV_KEY_RIGHT;
-        else if (keysDown & KEY_DLEFT)
-            data->key = LV_KEY_LEFT;
-        else if (keysDown & KEY_L)
-            data->key = LV_KEY_ESC;
-        else if (keysDown & KEY_R)
-            data->key = LV_KEY_ENTER;
-        else
-            data->state = LV_INDEV_STATE_REL;
-    } else {
-        data->state = LV_INDEV_STATE_REL;
-    }
+    data->state = LV_INDEV_STATE_REL;
 
-    //     LV_KEY_UP = 17,       /*0x11*/
-    //     LV_KEY_DOWN = 18,     /*0x12*/
-    //     LV_KEY_RIGHT = 19,    /*0x13*/
-    //     LV_KEY_LEFT = 20,     /*0x14*/
-    //     LV_KEY_ESC = 27,      /*0x1B*/
-    //     LV_KEY_DEL = 127,     /*0x7F*/
-    //     LV_KEY_BACKSPACE = 8, /*0x08*/
-    //     LV_KEY_ENTER = 10,    /*0x0A, '\n'*/
-    //     LV_KEY_NEXT = 9,      /*0x09, '\t'*/
-    //     LV_KEY_PREV = 11,     /*0x0B, '*/
-    //     LV_KEY_HOME = 2,      /*0x02, STX*/
-    //     LV_KEY_END = 3,       /*0x03, ETX*/
+    auto keysDown = hidKeysHeld(CONTROLLER_P1_AUTO);
+    if (keysDown) {
+        auto& lvKeyMap = *getInstance().mp_curLvKeyMap;
+
+        auto foundKeyMapEntry = lvKeyMap.find(keysDown);
+        if (foundKeyMapEntry != end(lvKeyMap)) {
+            data->state = LV_INDEV_STATE_PR;
+            data->key = foundKeyMapEntry->second;
+
+        } else {
+            for (auto& entry : lvKeyMap) {
+                if (entry.first & keysDown) {
+                    data->state = LV_INDEV_STATE_PR;
+                    data->key = entry.second;
+                    break;
+                }
+            }
+        }
+    }
 
     return false;
 }

@@ -4,6 +4,7 @@
 
 #include <memory>
 
+#include "key_map.hpp"
 #include "layer_info.h"
 #include "lvgl.h"
 #include "lx_config.h"
@@ -49,10 +50,11 @@ class Overlay {
     lv_indev_drv_t m_touchDrv;
     lv_indev_drv_t m_keyDrv;
 
-    // state members
+    // members
     void* mp_frameBuffers[2];
     bool m_doRender;
     bool m_isDocked;
+    const LvKeyMap* mp_curLvKeyMap;
 
     inline void copyPrivFb_();
     inline LayerInfo getCurLayerInfo_() { return m_isDocked ? DOCKED_LAYER_INFO : HANDHELD_LAYER_INFO; }
@@ -64,7 +66,7 @@ class Overlay {
     static bool keysRead_(lv_indev_drv_t* indev_driver, lv_indev_data_t* data);
 
    public:
-    static inline void initialize() { getInstance(); };
+    static inline void instantiate() { getInstance(); };
 
     // static inline void pauseRendering() { getInstance().m_doRender = false; }  // unused
     // static inline void resumeRendering() { getInstance().m_doRender = true; }  // unused
@@ -78,11 +80,13 @@ class Overlay {
 
     static inline auto getScaledRenderCoord(int baseCord) {
         return getInstance().m_isDocked ? baseCord * OVERLAY_UPSCALE_DOCKED
-                                     : baseCord * OVERLAY_UPSCALE_HANDHELD * HANDHELD_DOCK_PIXEL_RATIO;
+                                        : baseCord * OVERLAY_UPSCALE_HANDHELD * HANDHELD_DOCK_PIXEL_RATIO;
     }
 
+    static inline void setLvKeyMap(const LvKeyMap& lvKepMap) { getInstance().mp_curLvKeyMap = &lvKepMap; }
+
     static inline auto getKeyInDev() { return getInstance().mp_keyIn; }
-    static inline auto getTouchInDev() { return getInstance().mp_touchIn; }
+    // static inline auto getTouchInDev() { return getInstance().mp_touchIn; }  // unused
 };
 
 }  // namespace lx

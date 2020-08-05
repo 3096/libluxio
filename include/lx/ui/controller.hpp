@@ -38,7 +38,6 @@ class Controller {
     IScreen* mp_curScreen;
     IScreen* mp_nextScreen;
 
-    bool m_screenIsJustToggled;
     bool m_screenIsOn;
     bool m_shouldRerender;
     bool m_shouldExit;
@@ -49,14 +48,21 @@ class Controller {
     // helpers
     inline void mountScreen_(IScreen* screenToMount, IScreen* prevScreen);
     inline void updateFontStyles_();
+    inline auto keyComboIsJustPressedImpl_(HidControllerKeyData keyCombo) {
+        return (m_keysHeld & keyCombo) == keyCombo and m_keysHeld & m_keysDown;
+    }
+
     void threadMain_();
 
    public:
     static void show(IScreen& screenToShow);
     inline static void stop() { getInstance().m_shouldExit = true; }
 
-    inline static uint64_t getKeysDown() { return getInstance().m_keysDown; }
-    inline static uint64_t getKeysHeld() { return getInstance().m_keysHeld; }
+    // inline static auto getKeysDown() { return getInstance().m_keysDown; }  // unused
+    // inline static auto getKeysHeld() { return getInstance().m_keysHeld; }  // unused
+    inline static auto keyComboIsJustPressed(HidControllerKeyData keyCombo) {
+        return getInstance().keyComboIsJustPressedImpl_(keyCombo);
+    }
 
     inline static auto getFontStyleNormal() { return &(getInstance().m_fontStyleNormal); }
     inline static auto getFontStyleSmall() { return &(getInstance().m_fontStyleSmall); }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "lvgl.h"
+#include "lx/key_map.hpp"
 
 namespace lx::ui {
 
@@ -13,6 +14,9 @@ class IScreen {
 
     virtual lv_obj_t* getLvScreenObj() = 0;
     virtual lv_group_t* getLvInputGroup() = 0;
+
+    virtual const LvKeyMap& getLvKeyMap() { return DEFAULT_LV_KEY_MAP_INSTANCE; }
+    virtual const ActionKeyMap& getActionKeyMap() { return DEFAULT_ACTION_KEY_MAP_INSTANCE; }
 };
 
-}  // namespace ui
+}  // namespace lx::ui

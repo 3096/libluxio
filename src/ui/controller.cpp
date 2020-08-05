@@ -11,7 +11,6 @@ namespace lx::ui {
 Controller::Controller()
     : LOGCONSTRUCTSL mp_curScreen(nullptr),
       mp_nextScreen(nullptr),
-      m_screenIsJustToggled(false),
       m_screenIsOn(true),
       m_shouldRerender(true),
       m_shouldExit(false) {
@@ -28,6 +27,7 @@ Controller::~Controller() {}
 
 void Controller::mountScreen_(IScreen* screenToMount, IScreen* prevScreen) {
     screenToMount->onMount(prevScreen);
+    Overlay::setLvKeyMap(screenToMount->getLvKeyMap());
     lv_indev_set_group(Overlay::getKeyInDev(), screenToMount->getLvInputGroup());
     lv_scr_load(screenToMount->getLvScreenObj());
     m_shouldRerender = true;
@@ -61,20 +61,15 @@ void Controller::threadMain_() {
         hidScanInput();
         m_keysDown = hidKeysDown(CONTROLLER_P1_AUTO);
         m_keysHeld = hidKeysHeld(CONTROLLER_P1_AUTO);
-        // TODO: parameterize button combo
-        bool screenToggleKeysPressed = (m_keysHeld | KEY_DUP | KEY_RSTICK_UP) == m_keysHeld;
 
         // update screen toggle
-        if (not m_screenIsJustToggled and screenToggleKeysPressed) {
+        if (keyComboIsJustPressedImpl_(mp_curScreen->getActionKeyMap().toggleOverlay)) {
             m_screenIsOn = !m_screenIsOn;
-            m_screenIsJustToggled = true;
             if (m_screenIsOn) {
                 m_shouldRerender = true;
             } else {
                 Overlay::flushEmptyFb();  // Turn off screen
             }
-        } else if (m_screenIsJustToggled and not screenToggleKeysPressed) {
-            m_screenIsJustToggled = false;
         }
 
         if (m_screenIsOn) {

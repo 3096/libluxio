@@ -19,13 +19,14 @@ class BasicScreenProvider {
     };
     std::list<LvObjPositionUpdater> m_lvObjUpdaterList;
 
+    IScreen& m_curScreen;
     IScreen* mp_prevScreen;
 
     lv_obj_t* mp_screenObj;
     lv_group_t* mp_inputGroup;
 
    public:
-    BasicScreenProvider();
+    BasicScreenProvider(IScreen& curScreen);
     ~BasicScreenProvider();
 
     // transform to scaled render coord
@@ -49,7 +50,7 @@ class BasicScreenProvider {
     }
 
     inline void processReturn() {
-        if (ui::Controller::getKeysDown() & KEY_L) {  // TODO: make configurable
+        if (Controller::keyComboIsJustPressed(m_curScreen.getActionKeyMap().goBack)) {
             returnToPreviousScreen();
         }
     }
