@@ -13,6 +13,11 @@ namespace size {
 
 static inline auto MARGIN() { return Overlay::getScaledRenderCoord(18); }
 
+static inline auto getLayerHeight() { return Overlay::getCurLayerInfo().HEIGHT; }
+static inline auto getLayerWidth() { return Overlay::getCurLayerInfo().WIDTH; }
+// transform to scaled render coord
+static inline auto coord(int baseCoord) -> lv_coord_t { return Overlay::getScaledRenderCoord(baseCoord); }
+
 }  // namespace size
 
 namespace lv {

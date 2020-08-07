@@ -78,6 +78,7 @@ class Overlay {
     static bool getIsDockedStatusChanged();
     static inline bool getIsDockedStatus() { return getInstance().m_isDocked; }
 
+    static inline auto getCurLayerInfo() { return getInstance().getCurLayerInfo_(); }
     static inline auto getScaledRenderCoord(int baseCord) {
         return getInstance().m_isDocked ? baseCord * OVERLAY_UPSCALE_DOCKED
                                         : baseCord * OVERLAY_UPSCALE_HANDHELD * HANDHELD_DOCK_PIXEL_RATIO;

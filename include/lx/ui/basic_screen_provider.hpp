@@ -29,9 +29,6 @@ class BasicScreenProvider {
     BasicScreenProvider(IScreen& curScreen);
     ~BasicScreenProvider();
 
-    // transform to scaled render coord
-    static inline auto coord(int baseCoord) -> lv_coord_t { return Overlay::getScaledRenderCoord(baseCoord); }
-
     inline void addLvObjPositionUpdater(lv_obj_t* p_lvObj, std::function<void(lv_obj_t*)> updateCb) {
         m_lvObjUpdaterList.push_back({p_lvObj, updateCb});
     }
