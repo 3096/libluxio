@@ -88,6 +88,8 @@ inline void updateFitParent(lv_obj_t* p_lvWin) {
 #if LV_USE_BTNMATRIX
 namespace lv_btnmatrix {
 
+static constexpr auto LV_BTNMATRIX_END_STR = "";
+
 inline auto create(lv_obj_t* p_parent) {
     return lv::createObjWithStyle(p_parent, lv_btnmatrix_create, ui::Controller::getFontStyleSmall(),
                                   LV_BTNMATRIX_PART_BTN);

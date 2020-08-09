@@ -2,6 +2,18 @@
 
 #include <switch.h>
 
+// #define DEBUG_NXLINK_FORCED_IP 0x4500a8c0  // example: c0.a8.00.45 = 192.168.0.69
+
+#ifdef DEBUG_NXLINK_FORCED_IP
+
+#    include <netinet/in.h>
+
+extern "C" {
+extern in_addr __nxlink_host;
+}
+
+#endif
+
 namespace lx {
 
 #ifdef NDEBUG
@@ -11,6 +23,7 @@ void debugInit() {}
 void debugExit() {}
 
 #else
+
 #    include <cstdio>
 #    include <string>
 
@@ -47,6 +60,11 @@ void debugInit() {
 #    endif
 
 #    ifdef DEBUG_NX_LINK
+
+#        ifdef DEBUG_NXLINK_FORCED_IP
+    __nxlink_host.s_addr = DEBUG_NXLINK_FORCED_IP;
+#        endif
+
     nxlinkStdio();
 #    endif
 

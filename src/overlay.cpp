@@ -77,6 +77,7 @@ end:
 
 Overlay::~Overlay() {
     LOGSL("Exit Overlay... ");
+    flushEmptyFb();  // I don't know why this is needed, and I don't care; as long as it ends my sufferings
 
     eventClose(&m_viDisplayVsyncEvent);
     framebufferClose(&m_frameBufferInfo);
