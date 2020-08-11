@@ -54,7 +54,7 @@ void debugInit() {
     TRY_FATAL(timeGetCurrentTime(TimeType_Default, (u64*)&currentTime));
     timeExit();
 
-    std::string logName = "sdmc:/luxio" + std::to_string(currentTime) + ".log";  // TODO: better log location
+    std::string logName = "sdmc:/luxio" + std::to_string(currentTime) + ".log";
     g_debug_file = fopen(logName.c_str(), "w");
     if (g_debug_file == NULL) fatalThrow(0xf);
 #    endif

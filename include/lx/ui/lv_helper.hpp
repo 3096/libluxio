@@ -13,8 +13,11 @@ namespace size {
 
 static inline auto MARGIN() { return Overlay::getScaledRenderCoord(18); }
 
-static inline auto getLayerHeight() { return Overlay::getCurLayerInfo().HEIGHT; }
-static inline auto getLayerWidth() { return Overlay::getCurLayerInfo().WIDTH; }
+static inline auto getScreenHeight() { return Overlay::getCurLayerInfo().HEIGHT; }
+static inline auto getScreenWidth() { return Overlay::getCurLayerInfo().WIDTH; }
+static inline auto getScreenInnerHeight() { return Overlay::getCurLayerInfo().HEIGHT - MARGIN() * 2; }
+static inline auto getScreenInnerWidth() { return Overlay::getCurLayerInfo().WIDTH - MARGIN() * 2; }
+
 // transform to scaled render coord
 static inline auto coord(int baseCoord) -> lv_coord_t { return Overlay::getScaledRenderCoord(baseCoord); }
 
@@ -82,6 +85,8 @@ inline void updateFitParent(lv_obj_t* p_lvWin) {
     updateHeader(p_lvWin);
 }
 
+inline auto getWinInnerHeight() { return size::getScreenInnerHeight() - HEADER_HEIGHT(); }
+
 }  // namespace lv_win
 #endif
 
@@ -89,6 +94,7 @@ inline void updateFitParent(lv_obj_t* p_lvWin) {
 namespace lv_btnmatrix {
 
 static constexpr auto LV_BTNMATRIX_END_STR = "";
+static constexpr auto LV_BTNMATRIX_NEW_ROW_STR = "\n";
 
 inline auto create(lv_obj_t* p_parent) {
     return lv::createObjWithStyle(p_parent, lv_btnmatrix_create, ui::Controller::getFontStyleSmall(),
