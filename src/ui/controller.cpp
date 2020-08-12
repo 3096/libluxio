@@ -67,8 +67,10 @@ void Controller::threadMain_() {
             m_screenIsOn = !m_screenIsOn;
             if (m_screenIsOn) {
                 m_shouldRerender = true;
+                mp_curScreen->onToggleShow();
             } else {
                 Overlay::flushEmptyFb();  // Turn off screen
+                mp_curScreen->onToggleHide();
             }
         }
 

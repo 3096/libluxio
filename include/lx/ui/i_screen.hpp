@@ -9,6 +9,8 @@ class IScreen {
    public:
     virtual void onMount(IScreen* prevScreen) = 0;
     virtual void onUnmount() {}
+    virtual void onToggleHide() {}
+    virtual void onToggleShow() {}
     virtual void renderScreen() = 0;
     virtual void procFrame() = 0;
 
