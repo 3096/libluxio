@@ -58,9 +58,9 @@ void Controller::threadMain_() {
         }
 
         // update hid
-        hidScanInput();
-        m_keysDown = hidKeysDown(CONTROLLER_P1_AUTO);
-        m_keysHeld = hidKeysHeld(CONTROLLER_P1_AUTO);
+        auto padState = Overlay::scanPadState();
+        m_keysDown = padGetButtonsDown(&padState);
+        m_keysHeld = padGetButtons(&padState);
 
         // update screen toggle
         if (keyComboIsJustPressedImpl_(mp_curScreen->getActionKeyMap().toggleOverlay)) {
@@ -83,7 +83,7 @@ void Controller::threadMain_() {
                 mp_nextScreen = nullptr;
             }
 
-            if (Overlay::getIsDockedStatusChanged()) {
+            if (Overlay::updateAndGetIsDockedStatusChanged()) {
                 updateFontStyles_();
                 m_shouldRerender = true;
             }

@@ -13,6 +13,10 @@ namespace lx {
 Overlay::Overlay() : m_doRender(true), mp_curLvKeyMap(&DEFAULT_LV_KEY_MAP_INSTANCE) {
     LOGSL("constructing... ");
 
+    padConfigureInput(8, HidNpadStyleSet_NpadStandard);
+    padInitializeAny(&m_hidNPad);
+    hidInitializeTouchScreen();
+
     TRY_GOTO(apmInitialize(), end);
     TRY_GOTO(viInitialize(ViServiceType_Manager), end);
 
@@ -137,17 +141,17 @@ void Overlay::flushEmptyFb() {
 }
 
 bool Overlay::touchRead_(lv_indev_drv_t* indev_driver, lv_indev_data_t* data) {
-    if (hidTouchCount() > 0) {
+    auto touchScreenState = HidTouchScreenState{0};
+    hidGetTouchScreenStates(&touchScreenState, 1);
+    if (touchScreenState.count > 0) {
         data->state = LV_INDEV_STATE_PR;
-        touchPosition touch;
-        hidTouchRead(&touch, 0);
         auto curLayerInfo = getInstance().getCurLayerInfo_();
         if (Overlay::getIsDockedStatus()) {
-            data->point.x = touch.px * DOCK_HANDHELD_PIXEL_RATIO - curLayerInfo.POS_X;
-            data->point.y = touch.py * DOCK_HANDHELD_PIXEL_RATIO - curLayerInfo.POS_Y;
+            data->point.x = touchScreenState.touches[0].x * DOCK_HANDHELD_PIXEL_RATIO - curLayerInfo.POS_X;
+            data->point.y = touchScreenState.touches[0].y * DOCK_HANDHELD_PIXEL_RATIO - curLayerInfo.POS_Y;
         } else {
-            data->point.x = touch.px - curLayerInfo.POS_X * DOCK_HANDHELD_PIXEL_RATIO;
-            data->point.y = touch.py - curLayerInfo.POS_Y * DOCK_HANDHELD_PIXEL_RATIO;
+            data->point.x = touchScreenState.touches[0].x - curLayerInfo.POS_X * DOCK_HANDHELD_PIXEL_RATIO;
+            data->point.y = touchScreenState.touches[0].y - curLayerInfo.POS_Y * DOCK_HANDHELD_PIXEL_RATIO;
         }
     } else {
         data->state = LV_INDEV_STATE_REL;
@@ -158,7 +162,7 @@ bool Overlay::touchRead_(lv_indev_drv_t* indev_driver, lv_indev_data_t* data) {
 bool Overlay::keysRead_(lv_indev_drv_t* indev_driver, lv_indev_data_t* data) {
     data->state = LV_INDEV_STATE_REL;
 
-    auto keysDown = hidKeysHeld(CONTROLLER_P1_AUTO);
+    auto keysDown = padGetButtons(&getInstance().m_hidNPad);
     if (keysDown) {
         auto& lvKeyMap = *getInstance().mp_curLvKeyMap;
 
@@ -183,7 +187,7 @@ bool Overlay::keysRead_(lv_indev_drv_t* indev_driver, lv_indev_data_t* data) {
 
 void Overlay::waitForVSync() { TRY_THROW(eventWait(&getInstance().m_viDisplayVsyncEvent, UINT64_MAX)); }
 
-bool Overlay::getIsDockedStatusChanged() {
+bool Overlay::updateAndGetIsDockedStatusChanged() {
     auto curIsDocked = getInstance().consoleIsDocked_();
     if (curIsDocked != getInstance().m_isDocked) {
         getInstance().m_isDocked = curIsDocked;
@@ -214,7 +218,7 @@ void Overlay::setLayerSizeAndPosition_() {
 bool Overlay::consoleIsDocked_() {
     ApmPerformanceMode curPerformanceMode;
     TRY_THROW(apmGetPerformanceMode(&curPerformanceMode));
-    return curPerformanceMode == ApmPerformanceMode_Docked;
+    return curPerformanceMode == ApmPerformanceMode_Boost;
 }
 
 }  // namespace lx

@@ -10,7 +10,7 @@
 
 namespace lx {
 
-using HidControllerKeyData = decltype(hidKeysDown(CONTROLLER_P1_AUTO));
+using HidControllerKeyData = decltype(PadState::buttons_cur);
 
 using LvKeyMap = std::unordered_map<HidControllerKeyData, lv_key_t>;
 static const auto DEFAULT_LV_KEY_MAP_INSTANCE = LvKeyMap{DEFAULT_LV_KEY_MAP};

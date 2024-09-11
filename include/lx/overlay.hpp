@@ -34,6 +34,7 @@ class Overlay {
                                                       OVERLAY_POS_X_HANDHELD, OVERLAY_POS_Y_HANDHELD};
 
     // libnx members
+    PadState m_hidNPad;
     ViDisplay m_viDisplay;
     ViLayer m_viLayer;
     NWindow m_nWindow;
@@ -75,8 +76,13 @@ class Overlay {
     static void flushEmptyFb();
     static void waitForVSync();
 
-    static bool getIsDockedStatusChanged();
+    static bool updateAndGetIsDockedStatusChanged();
     static inline bool getIsDockedStatus() { return getInstance().m_isDocked; }
+    static inline auto scanPadState() {
+        auto& padState = getInstance().m_hidNPad;
+        padUpdate(&padState);
+        return padState;
+    }
 
     static inline auto getCurLayerInfo() { return getInstance().getCurLayerInfo_(); }
     static inline auto getScaledRenderCoord(int baseCord) {
